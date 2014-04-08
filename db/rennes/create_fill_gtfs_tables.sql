@@ -1,4 +1,4 @@
-CREATE TABLE agency (agency_id TEXT, agency_name TEXT, agency_url TEXT, agency_timezone TEXT, agency_lang TEXTagency_phone TEXT);
+CREATE TABLE agency (agency_id TEXT, agency_name TEXT, agency_url TEXT, agency_timezone TEXT, agency_lang TEXT, agency_phone TEXT);
 CREATE TABLE stops (stop_id TEXT, stop_code INTEGER, stop_name TEXT, stop_desc TEXT, stop_lat REAL, stop_lon REAL, zone_id TEXT, stop_url TEXT, location_type INTEGER, parent_station INTEGER, stop_timezone TEXT, wheelchair_boardin INTEGER);
 CREATE TABLE routes (route_id TEXT, agency_id TEXT, route_short_name TEXT, route_long_name TEXT, route_desc TEXT, route_type INTEGER, route_url TEXT, route_color TEXT, route_text_color TEXT);
 CREATE TABLE trips (route_id TEXT, service_id TEXT, trip_id TEXT, trip_headsign TEXT, trip_short_name TEXT, direction_id TEXT, block_id TEXT, shape_id TEXT, wheelchair_accessible INTEGER, bikes_allowed INTEGER);
