@@ -1,0 +1,7 @@
+lister tous les arrets dans un perimetre de (1 km)
+
+dans un arret :
+		savoir le nom de l'arret
+		savoir le nom de la ligne
+		savoir le terminus
+		lister les (5) horaires des prochains passages
