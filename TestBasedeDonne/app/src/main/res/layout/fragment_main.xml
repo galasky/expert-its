@@ -9,41 +9,26 @@
     tools:context="com.example.app.MainActivity$PlaceholderFragment">
 
 
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
     <EditText
-        android:id="@+id/lat1"
-        android:hint="latitude 1"
-        android:layout_width="500dp"
-        android:layout_height="50dp" />
-    <EditText
-        android:id="@+id/lon1"
-        android:hint="longitude 1"
-        android:layout_width="500dp"
-        android:layout_height="50dp" />
-    <EditText
-        android:id="@+id/lat2"
-        android:hint="latitude 2"
-        android:layout_width="500dp"
-        android:layout_height="50dp" />
-    <EditText
-        android:id="@+id/lon2"
-        android:hint="longitude 2"
+        android:id="@+id/distance"
+        android:inputType="numberDecimal"
+        android:hint="distance (Km)"
         android:layout_width="500dp"
         android:layout_height="50dp" />
 
         <Button
             android:id="@+id/angry_btn"
 
-            android:text="calcul"
+            android:text="Recherche des arrêts"
             android:textColor="#FFFFFF"
             android:textSize="30sp"
-            android:onClick="testData"
-            android:layout_width="500dp"
+            android:onClick="listStop"
+            android:layout_width="fill_parent"
             android:layout_height="60dp"
             android:background="@drawable/apptheme_btn_default_holo_light"
             android:shadowColor="#A8A8A8"
@@ -52,7 +37,15 @@
             android:shadowRadius="5"
             />
 
-    </LinearLayout>
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </ScrollView>
 
+    </LinearLayout>
 
 </RelativeLayout>

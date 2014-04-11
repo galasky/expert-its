@@ -1,9 +1,11 @@
 package com.example.app;
 
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,11 +19,16 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Timer;
 
 public class MainActivity extends ActionBarActivity {
 
-    private DataBaseHelper myDbHelper;
+    private Territory territory = new Territory(this);
     private Button button;
+    private HashMap<String, Stop> hashMapStops;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,49 +39,43 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
-        loadData();
     }
 
-    public void loadData() {
-        myDbHelper = new DataBaseHelper(this);
-        try {
-            myDbHelper.createDataBase();
+    //distance in Km
+    public void listStop(View v) {
+       // double distance = (EditText) findViewById(R.id.distance);
+        double time = System.currentTimeMillis();
+        hashMapStops = territory.getListStopByDistance(5, new CoordinateGPS(48.09275716032735, -1.64794921875));
+        TextView text = (TextView) findViewById(R.id.text);
+        Iterator i = hashMapStops.entrySet().iterator();
+        Stop stop = null;
+        String str = new String();
+        str += "Temps de la requête : " + (System.currentTimeMillis() - time) + " ms\n";
+        str += "Nombre d'arrêts : " + hashMapStops.entrySet().size() + "\n\n";
+        /*while(i.hasNext()){
+            stop = (Stops) i.next();
+            str += "Latitude : " + stop.getCoord().latitude + " Longitude : " + stop.getCoord().longitude + "\n";
+        }*/
+        text.setText(str);
+    }
 
-        } catch (IOException ioe) {
-            throw new Error("Unable to create database");
+    public void infoStop(View w) {
+        EditText dist = (EditText) findViewById(R.id.distance);
+        Stop stop = territory.getStopById(dist.getText().toString());
+        TextView text = (TextView) findViewById(R.id.text);
+        String str = new String();
+        str += "Stop info : \n";
+        str += "Nom de l'arret : " + stop.stop_name + "\n";
+        str += "Description : " + stop.stop_desc + "\n";
+        str += "latitude : " + stop.stop_lat + "\n";
+        str += "lontitide : " + stop.stop_lon + "\n";
+        str += "list trip :\n";
+        Iterator<String> i = stop.list_trip.iterator();
+        while (i.hasNext()) {
+            String trip = i.next();
+            str += "\t\t" + trip + "\n";
         }
-        try {
-
-            myDbHelper.openDataBase();
-
-        }catch(SQLException sqle){
-
-        }
-    }
-
-    public void testData(View w) {
-        EditText lat1 = (EditText) findViewById(R.id.lat1);
-        EditText lon1 = (EditText) findViewById(R.id.lon1);
-        EditText lat2 = (EditText) findViewById(R.id.lat2);
-        EditText lon2 = (EditText) findViewById(R.id.lon2);
-        button = (Button) findViewById(R.id.angry_btn);
-        String result = new String();
-        result = String.valueOf(distanceAB(new Double(lat1.getText().toString()), new Double(lon1.getText().toString()), new Double(lat2.getText().toString()), new Double(lon2.getText().toString())));
-        button.setText(result + " km");
-    }
-
-    // lat1, lat2, lon1, lon2 in degrees
-    public double distanceAB(double lat1, double lon1, double lat2, double lon2) {
-        double R = 6371; // km
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLon = Math.toRadians(lon2-lon1);
-        lat1 = Math.toRadians(lat1);
-        lat2 = Math.toRadians(lat2);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = R * c;
-        return d;
+        text.setText(str);
     }
 
     @Override
