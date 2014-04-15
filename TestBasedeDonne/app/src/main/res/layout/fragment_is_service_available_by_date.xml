@@ -6,8 +6,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.app.MainActivity$PlaceholderFragment">
-
+    tools:context="com.example.app.IsServiceAvailableByDate$PlaceholderFragment">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
@@ -15,20 +14,27 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-    <EditText
-        android:id="@+id/distance"
-        android:inputType="numberDecimal"
-        android:hint="distance (Km)"
-        android:layout_width="500dp"
-        android:layout_height="50dp" />
+        <EditText
+            android:id="@+id/idService"
+            android:inputType="text"
+            android:onClick="resetButtonColor"
+            android:hint="Service id"
+            android:layout_width="500dp"
+            android:layout_height="50dp" />
+
+        <DatePicker
+            android:layout_width="wrap_content"
+            android:layout_height="212dp"
+            android:onClick="isServiceAvailableByDate"
+            android:id="@+id/datePicker" />
 
         <Button
-            android:id="@+id/angry_btn"
+            android:id="@+id/available_button"
 
-            android:text="getListStopByDistance"
+            android:text="isServiceAvailableByDate"
             android:textColor="#FFFFFF"
             android:textSize="30sp"
-            android:onClick="getListStopByDistance"
+            android:onClick="isServiceAvailableByDate"
             android:layout_width="fill_parent"
             android:layout_height="60dp"
             android:background="@drawable/apptheme_btn_default_holo_light"
@@ -43,7 +49,7 @@
             android:layout_height="229dp"
             android:layout_weight="1.03">
             <TextView
-                android:id="@+id/text"
+                android:id="@+id/TextInfoStop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </ScrollView>
@@ -67,7 +73,5 @@
             android:layout_alignParentStart="true" />
 
     </LinearLayout>
-
-
 
 </RelativeLayout>

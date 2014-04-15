@@ -8,8 +8,6 @@ public class Stop {
     public String stop_code;
     public String stop_name;
     public String stop_desc;
-    public String stop_lat;
-    public String stop_lon;
     public String zone_id;
     public String stop_url;
     public String location_type;

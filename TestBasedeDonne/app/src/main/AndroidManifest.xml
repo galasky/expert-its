@@ -14,8 +14,17 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <uses-sdk android:minSdkVersion="14"/>
+
+                <uses-sdk android:minSdkVersion="14" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.app.GetStopActivity"
+            android:label="@string/title_activity_get_stop" >
+        </activity>
+        <activity
+            android:name="com.example.app.IsServiceAvailableByDate"
+            android:label="@string/title_activity_is_service_available_by_date" >
         </activity>
     </application>
 

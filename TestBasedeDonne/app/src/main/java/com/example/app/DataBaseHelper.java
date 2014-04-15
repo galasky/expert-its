@@ -153,49 +153,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public Stop getStopById(String id) {
-        String query = "SELECT * FROM stops WHERE stop_id = " + id;
+    public Cursor execSQL(String query) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        Stop stop = new Stop();
-        if (cursor.moveToFirst()) {
-            stop.stop_id = cursor.getString(0);
-            stop.stop_code = cursor.getString(1);
-            stop.stop_name = cursor.getString(2);
-            stop.stop_desc = cursor.getString(3);
-            stop.stop_lat = cursor.getString(4);
-            stop.stop_lon = cursor.getString(5);
-            stop.zone_id = cursor.getString(6);
-            stop.stop_url = cursor.getString(7);
-            stop.location_type = cursor.getString(8);
-            stop.parent_station = cursor.getString(9);
-            stop.stop_timezone = cursor.getString(10);
-            stop.wheelchair_boarding = cursor.getString(11);
-        }
-        return stop;
-    }
-
-    public HashMap<String, Stop> getHashMapStopsByDistance(double distance, CoordinateGPS myPosition) {
-        HashMap<String, Stop> listStops = new HashMap<String, Stop>();
-
-        String query = "SELECT * FROM " + "stops";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        Stop stop = null;
-        if (cursor.moveToFirst()) {
-            cursor.moveToNext();
-            do {
-                stop = new Stop();
-                stop.setCoord(new Double(cursor.getString(4)), new Double(cursor.getString(5)));
-                stop.stop_id = cursor.getString(0);
-                // Add book to books
-                if (distanceAB(stop.coord, myPosition) < distance) {
-                    listStops.put(stop.stop_id, stop);
-                }
-            } while (cursor.moveToNext());
-        }
-        return listStops;
+        return db.rawQuery(query, null);
     }
 
     private boolean isServiceAvailableAll(String idService, Date today) {
@@ -220,22 +180,46 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return (available.equals("1"));
     }
 
-    public boolean isServiceAvailable(String idService, Date today) {
-        return isServiceAvailableAll(idService, today);
+    public int  serviceException(String idService, Date today) {
+        String available  = new String();
+
+        String query = "SELECT * FROM calendar_dates WHERE service_id = " + idService;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+
+            String str = new String();
+
+            int year, month, day;
+
+            str = cursor.getString(1);
+            Log.d("galasky", str);
+            year = Integer.valueOf(str.substring(0, 4));
+            Log.d("galasky", year +"");
+            month = Integer.valueOf(str.substring(2, 2));
+            Log.d("galasky", month+"");
+            day = Integer.valueOf(str.substring(0, 2));
+            Log.d("galasky", year + "/" + month + "/" + day);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(today);
+            int year2 = cal.get(Calendar.YEAR);
+            int month2 = cal.get(Calendar.MONTH);
+            int day2 = cal.get(Calendar.DAY_OF_WEEK);
+            if (year == year2 && month == month2 && day == day2)
+                return Integer.valueOf(cursor.getString(2));
+        }
+        return 0;
     }
 
-    // lat1, lat2, lon1, lon2 in degrees
-    public double distanceAB(CoordinateGPS A, CoordinateGPS B) {
-        double R = 6371; // km
-        double dLat = Math.toRadians(B.latitude - A.latitude);
-        double dLon = Math.toRadians(B.longitude - A.longitude);
-        double lat1 = Math.toRadians(A.latitude);
-        double lat2 = Math.toRadians(B.latitude);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = R * c;
-        return d; // Km
+    public boolean isServiceAvailableByDate(String idService, Date today) {
+        switch (serviceException("2", today)) {
+            case 1:
+                return true;
+            case 2:
+                return false;
+        }
+        return isServiceAvailableAll(idService, today);
     }
     // Add your public helper methods to access and get content from the database.
     // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy

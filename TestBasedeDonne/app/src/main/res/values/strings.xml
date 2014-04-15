@@ -4,5 +4,7 @@
     <string name="app_name">TestBasedeDonnée</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_get_stop">GetStopActivity</string>
+    <string name="title_activity_is_service_available_by_date">IsServiceAvailableByDate</string>
 
 </resources>
