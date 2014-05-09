@@ -17,7 +17,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/com.me.mygdxgame/databases/";
 
-    private static String DB_NAME = "utagtfs.db";
+    private static String DB_NAME = "montpellier.db";
 
     private SQLiteDatabase myDataBase;
 

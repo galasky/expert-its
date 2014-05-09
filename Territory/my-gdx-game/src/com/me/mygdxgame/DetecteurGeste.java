@@ -33,6 +33,7 @@ public class DetecteurGeste implements GestureListener {
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
 		// TODO Auto-generated method stub
+		Game3D.instance().touchScreen(x, y);
 		return false;
 	}
 

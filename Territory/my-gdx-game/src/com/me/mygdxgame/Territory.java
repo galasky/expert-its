@@ -178,7 +178,7 @@ public class Territory {
     }
 
     // lat1, lat2, lon1, lon2 in degrees
-    public double distanceAB(CoordinateGPS A, CoordinateGPS B) {
+    static public double distanceAB(CoordinateGPS A, CoordinateGPS B) {
         double R = 6371; // km
         double dLat = Math.toRadians(B.latitude - A.latitude);
         double dLon = Math.toRadians(B.longitude - A.longitude);

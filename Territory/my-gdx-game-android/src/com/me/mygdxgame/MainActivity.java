@@ -46,6 +46,7 @@ public class MainActivity extends AndroidApplication implements LocationListener
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
+		Log.d("ok", "galasky LOCATION");
 		You.instance().setPosition(location);
 	}
 	@Override
