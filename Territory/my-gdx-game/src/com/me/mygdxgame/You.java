@@ -19,7 +19,7 @@ public class You {
 	
 	private	You() {
 		position = new Vector3(0, 0, 0);
-		_loaded = false;
+		_loaded = true;
 		coordinate = null;
 		start = null;
 	}

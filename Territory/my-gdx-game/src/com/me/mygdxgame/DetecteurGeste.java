@@ -40,7 +40,7 @@ public class DetecteurGeste implements GestureListener {
 	@Override
 	public boolean longPress(float x, float y) {
 		// TODO Auto-generated method stub
-
+		MyCamera.instance().firstPerson = !MyCamera.instance().firstPerson;
 		return false;
 	}
 

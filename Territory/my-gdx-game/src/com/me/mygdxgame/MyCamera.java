@@ -13,20 +13,21 @@ import com.badlogic.gdx.math.Vector3;
 public class MyCamera {
 	private float				_angleBoussole, _angle, _acAngle;
 	private float				_angleFiltre;
+	private float				_time;
 	public PerspectiveCamera	pCam;
 	private You					_you;
 	private float				_zoom;
 	private int					_t;
 	private float				_m;
-	private Vector3				_position;
+	private Vector3				_look;
 	private Vector3				_start;
 	private int					i;
-	private boolean				ok;
+	public boolean				firstPerson;
 	private ArrayList<Float>			tab;
 	
 	private	MyCamera() {
 		_t = 100;
-		ok = false;
+		firstPerson = false;
 		tab = new ArrayList<Float>();
 		_zoom = 4;
 		_angle = 0;
@@ -36,13 +37,14 @@ public class MyCamera {
         pCam = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         _you = You.instance();
         pCam = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        _start = new Vector3(-1, 0, 0);
-        _position = new Vector3(-1, 0, 0);
+        _start = new Vector3(1, 0, 0);
+        _look = new Vector3(1, 0, 0);
         pCam.lookAt(0,0,0);
-        pCam.near = 1f;
+        pCam.near = 0.001f;
         pCam.far = 3000f;
         pCam.update();
         i = 0;
+        _time = 0;
 	}
 	
 	public static MyCamera instance() {
@@ -68,21 +70,26 @@ public class MyCamera {
 	}
 	
 	private void filtre() {
-			if (Math.abs(_angleBoussole + Math.PI * 2 - _angleFiltre) < 1)
-				_angleBoussole += Math.PI * 2;
-			if (Math.abs(_angleBoussole - Math.PI * 2 - _angleFiltre) < 1)
-				_angleBoussole -= Math.PI * 2;
-			if (Math.abs(_angleFiltre - Math.PI * 2) < 0.1 || Math.abs(_angleFiltre + Math.PI * 2) < 0.1)
-			{
-				_angleFiltre = 0;
-				tab.clear();
-				return ;
-			}
-		tab.add(new Float(_angleBoussole));
+		if (Math.abs(_angleBoussole + Math.PI * 2 - _angleFiltre) < 1)
+			_angleBoussole += Math.PI * 2;
+		if (Math.abs(_angleBoussole - Math.PI * 2 - _angleFiltre) < 1)
+			_angleBoussole -= Math.PI * 2;
+		if (Math.abs(_angleFiltre - Math.PI * 2) < 0.1 || Math.abs(_angleFiltre + Math.PI * 2) < 0.1)
+		{
+			_angleFiltre = 0;
+			tab.clear();
+			return ;
+		}
+		//if (_time >= 1f / 60)
+		//{
+			_time = 0;
+			tab.add(new Float(_angleBoussole));
+		//}	
 		if (tab.size() >= 20)
 		{
+			
 			_angleFiltre = moyenne();
-			Log.d("ok", "galasky filtre = " + _angleFiltre);
+			//Log.d("ok", "galasky filtre = " + _angleFiltre);
 			tab.remove(0);
 		}
 		else
@@ -92,7 +99,7 @@ public class MyCamera {
 	}
 	
 	public void update() {
-		
+		_time += Gdx.graphics.getDeltaTime();
 		_angleBoussole = (float) ((Math.PI * Gdx.input.getAzimuth()) / 180);
 		//Log.d("ok", "galasky size = " + tab.size());
 		filtre();
@@ -138,7 +145,13 @@ public class MyCamera {
 				}
 			}
 		}*/
-		
+		if (firstPerson == true)
+			firstPerson();
+		else
+			thirdPerson();
+	}
+	
+	private void	thirdPerson() {
 		/*pCam.position.x = _start.x;
 		pCam.position.y = _start.y;
 		pCam.position.z = _start.z;
@@ -157,12 +170,36 @@ public class MyCamera {
 		pCam.update();
 	}
 	
+	private void	firstPerson() {
+		
+		/*_look.x = _start.x;
+		_look.y = _start.y;
+		_look.z = _start.z;*/
+		
+		_look.x = (float) Math.sin(-_angleFiltre + Math.PI / 2);
+		_look.y *= 1;
+		_look.z = (float) Math.cos(-_angleFiltre + Math.PI / 2);
+
+		//rotation_y(_angleFiltre, _look);
+		pCam.position.x = You.instance().position.x;
+		pCam.position.y = You.instance().position.y;
+		pCam.position.z = You.instance().position.z;
+		
+		pCam.lookAt(_look);
+		pCam.up.x = 0;
+		pCam.up.y = 1;
+		pCam.up.z = 0;
+		pCam.update();
+	}
+	
 	public float	getAngle() {
 		return _angleFiltre;
 	}
 	
     public void zoom(float DistanceInitial, float DistanceActuel) {
-    	_position.y += pCam.position.y * (DistanceInitial - DistanceActuel) / 10000;
+    	//_position.y += pCam.position.y * (DistanceInitial - DistanceActuel) / 10000;
+    	if (firstPerson == true)
+    		return ;
     	_zoom += (DistanceInitial - DistanceActuel) / 10000;
     	pCam.lookAt(0,0,0);
     	pCam.update();
