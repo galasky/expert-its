@@ -33,14 +33,14 @@ public class DetecteurGeste implements GestureListener {
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
 		// TODO Auto-generated method stub
-		Game3D.instance().touchScreen(x, y);
+		Game3D.instance().tap(x, y);
 		return false;
 	}
 
 	@Override
 	public boolean longPress(float x, float y) {
 		// TODO Auto-generated method stub
-		MyCamera.instance().firstPerson = !MyCamera.instance().firstPerson;
+		Game3D.instance().longPress();
 		return false;
 	}
 
@@ -52,6 +52,7 @@ public class DetecteurGeste implements GestureListener {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
+		Game3D.instance().touchScreen(x, y, deltaX, deltaY);
 		return false;
 	}
 

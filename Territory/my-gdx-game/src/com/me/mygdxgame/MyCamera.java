@@ -11,40 +11,26 @@ import com.badlogic.gdx.math.Vector3;
 
 
 public class MyCamera {
-	private float				_angleBoussole, _angle, _acAngle;
+	private float				_angleBoussole;
 	private float				_angleFiltre;
-	private float				_time;
 	public PerspectiveCamera	pCam;
-	private You					_you;
 	private float				_zoom;
-	private int					_t;
-	private float				_m;
 	private Vector3				_look;
-	private Vector3				_start;
-	private int					i;
 	public boolean				firstPerson;
-	private ArrayList<Float>			tab;
+	private ArrayList<Float>	_tab;
 	
 	private	MyCamera() {
-		_t = 100;
 		firstPerson = false;
-		tab = new ArrayList<Float>();
-		_zoom = 4;
-		_angle = 0;
-        _acAngle = 0;
-        _m = 0;
+		_tab = new ArrayList<Float>();
+		_zoom = 10;
         _angleFiltre = 0;
         pCam = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        _you = You.instance();
         pCam = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        _start = new Vector3(1, 0, 0);
         _look = new Vector3(1, 0, 0);
         pCam.lookAt(0,0,0);
-        pCam.near = 0.001f;
+        pCam.near = 1f;
         pCam.far = 3000f;
         pCam.update();
-        i = 0;
-        _time = 0;
 	}
 	
 	public static MyCamera instance() {
@@ -61,12 +47,12 @@ public class MyCamera {
 		int i = 0;
 		float	m = 0;
 		
-		while (i < tab.size())
+		while (i < _tab.size())
 		{
-			m += tab.get(i);
+			m += _tab.get(i);
 			i++;
 		}
-		return m / tab.size();
+		return m / _tab.size();
 	}
 	
 	private void filtre() {
@@ -77,74 +63,24 @@ public class MyCamera {
 		if (Math.abs(_angleFiltre - Math.PI * 2) < 0.1 || Math.abs(_angleFiltre + Math.PI * 2) < 0.1)
 		{
 			_angleFiltre = 0;
-			tab.clear();
+			_tab.clear();
 			return ;
 		}
-		//if (_time >= 1f / 60)
-		//{
-			_time = 0;
-			tab.add(new Float(_angleBoussole));
-		//}	
-		if (tab.size() >= 20)
+			_tab.add(new Float(_angleBoussole));
+		if (_tab.size() >= 20)
 		{
 			
 			_angleFiltre = moyenne();
-			//Log.d("ok", "galasky filtre = " + _angleFiltre);
-			tab.remove(0);
+			_tab.remove(0);
 		}
 		else
 		{
-			//_angleFiltre = (float) ((Math.PI * Gdx.input.getAzimuth()) / 180);
 		}
 	}
 	
 	public void update() {
-		_time += Gdx.graphics.getDeltaTime();
 		_angleBoussole = (float) ((Math.PI * Gdx.input.getAzimuth()) / 180);
-		//Log.d("ok", "galasky size = " + tab.size());
 		filtre();
-		/*float delta = Math.abs(_angleBoussole - _angle);
-		if (delta > 0.2)
-		{
-			_acAngle = _angleBoussole;
-		}
-		if (_acAngle != _angle)
-		{
-			if (_acAngle > _angle)
-			{
-				if (delta < Math.PI * 1.5)
-				{
-					_angle += 0.1 * delta;
-					if (_you.isLoaded())
-						_you.modelInstance.transform.rotate(new Vector3(0, 1, 0), -0.1F * delta * 57.2957795F);
-					if (_acAngle < _angle)
-						_acAngle = _angle;
-				}
-				else
-				{
-					_angle += Math.PI * 1.99;
-					if (_you.isLoaded())
-						_you.modelInstance.transform.rotate(new Vector3(0, 1, 0), (float) (-Math.PI * 1.99 * 57.2957795F));
-				}
-			}
-			if (_acAngle < _angle)
-			{
-				if (delta < Math.PI * 1.5)
-				{
-					_angle -= 0.1 * delta;
-					if (_you.isLoaded())
-						_you.modelInstance.transform.rotate(new Vector3(0, 1, 0), 0.1F * delta * 57.2957795F);
-					if (_acAngle > _angle)
-						_acAngle = _angle;
-				}
-				else
-				{
-					_angle -= Math.PI * 2;
-					if (_you.isLoaded())
-						_you.modelInstance.transform.rotate(new Vector3(0, 1, 0), (float) (Math.PI * 2 * 57.2957795F));
-				}
-			}
-		}*/
 		if (firstPerson == true)
 			firstPerson();
 		else
@@ -152,11 +88,6 @@ public class MyCamera {
 	}
 	
 	private void	thirdPerson() {
-		/*pCam.position.x = _start.x;
-		pCam.position.y = _start.y;
-		pCam.position.z = _start.z;
-		
-		rotation_y(_angleFiltre - Math.PI / 2, pCam.position);*/
 		pCam.position.x = (float) Math.sin(-_angleFiltre - Math.PI / 2) * _zoom;
 		pCam.position.y = 0.5f * _zoom;
 		pCam.position.z = (float) Math.cos(-_angleFiltre - Math.PI / 2) * _zoom;
@@ -171,16 +102,10 @@ public class MyCamera {
 	}
 	
 	private void	firstPerson() {
-		
-		/*_look.x = _start.x;
-		_look.y = _start.y;
-		_look.z = _start.z;*/
-		
 		_look.x = (float) Math.sin(-_angleFiltre + Math.PI / 2);
 		_look.y *= 1;
 		_look.z = (float) Math.cos(-_angleFiltre + Math.PI / 2);
 
-		//rotation_y(_angleFiltre, _look);
 		pCam.position.x = You.instance().position.x;
 		pCam.position.y = You.instance().position.y;
 		pCam.position.z = You.instance().position.z;

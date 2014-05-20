@@ -1,0 +1,8 @@
+package com.me.mygdxgame;
+
+public interface IGUI {
+	public IGUI	inverte();
+	public void touche(float x, float y, float deltaX, float deltaY);
+	public void tap(float x, float y);
+	public void render();
+}
