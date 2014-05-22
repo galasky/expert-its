@@ -40,7 +40,6 @@ public class Territory {
 
     private static class SingletonHolder
     {
-        /** Instance unique non préinitialisée */
         private final static Territory instance = new Territory();
     }
 
@@ -58,7 +57,7 @@ public class Territory {
                 stop.stop_id = cursor.getString(cursor.getColumnIndex("stop_id"));
                 stop.stop_name = cursor.getString(cursor.getColumnIndex("stop_name"));
                 // Add book to books
-                if (distanceAB(stop.coord, position) < distance) {
+                if (distanceAB(stop.coord, position) < distance && stop.stop_id.charAt(0) != 'S') {
                     listStops.add(stop);
                 }
             } while (cursor.moveToNext());
@@ -89,7 +88,7 @@ public class Territory {
     }
 
     public int  serviceException(String idService, Date today) {
-        Cursor cursor = myDbHelper.execSQL("SELECT * FROM calendar_dates WHERE service_id = " + idService);
+        Cursor cursor = myDbHelper.execSQL("SELECT * FROM calendar_dates WHERE service_id = '" + idService +"'");
 
         if (cursor.moveToFirst()) {
             String str = new String();
@@ -122,6 +121,39 @@ public class Territory {
         return true;
     }
 
+    public List<StopTimes>	getListStopTimesByStopId(String stop_id) {
+    	Cursor cursor = myDbHelper.execSQL("SELECT * FROM stop_times WHERE stop_id = " + stop_id);
+        
+        List<StopTimes> listStopTimes = new ArrayList<StopTimes>();
+        StopTimes stopTimes = null;
+        if (cursor.moveToFirst()) {
+            cursor.moveToNext();
+            do {
+                stopTimes = new StopTimes();
+                stopTimes.trip_id = cursor.getString(cursor.getColumnIndex("trip_id"));
+                stopTimes.arrival_time = new MyTimes(cursor.getString(cursor.getColumnIndex("arrival_time")));
+                stopTimes.departure_time = new MyTimes(cursor.getString(cursor.getColumnIndex("departure_time")));
+                stopTimes.stop_sequence = cursor.getString(cursor.getColumnIndex("stop_sequence"));
+                listStopTimes.add(stopTimes);
+            } while (cursor.moveToNext());
+        }
+        return listStopTimes;
+    }
+
+    public Trips getTripsByTripId(String trip_id) {
+    	Cursor cursor = myDbHelper.execSQL("SELECT * FROM trips WHERE trip_id = " + trip_id);
+    	Trips trips = null;
+    	
+    	if (cursor.moveToFirst()) {
+    		trips = new Trips();
+    		trips.service_id = cursor.getString(cursor.getColumnIndex("service_id"));
+    		trips.route_id = cursor.getString(cursor.getColumnIndex("route_id"));
+    		trips.trip_id = cursor.getString(cursor.getColumnIndex("trip_id"));
+    		trips.direction_id = cursor.getString(cursor.getColumnIndex("direction_id"));
+    	}
+    	return trips;
+    }
+    
     public boolean isServiceAvailableByDate(String idService, Date date) {
         int type = serviceException(idService, date);
         switch (type) {
@@ -132,7 +164,7 @@ public class Territory {
             default:
                 break;
         }
-        Cursor cursor = myDbHelper.execSQL("SELECT * FROM calendar WHERE service_id = " + idService);
+        Cursor cursor = myDbHelper.execSQL("SELECT * FROM calendar WHERE service_id = '" + idService + "'");
 
         String available  = new String();
         if (cursor.moveToFirst()) {

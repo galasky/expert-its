@@ -1,37 +1,64 @@
 package com.me.mygdxgame;
 
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import android.util.Log;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 public class BubbleStop {
 	public Vector2		position;
+	public List<StopTimes>	listStopTimes;
 	private Vector2		_direction;
 	public	float		slide;
 	public Stop			stop;
+	public int			order;
 	private float		_inertie;
 	public	float		distance;
 	public boolean		touch;
 	private float		_timeTouch;
 	private float		_timeSelect;
-	public int			min;
+	public MyTimes		nextTime;
 	public boolean		select;
+	private Date		_today;
+	public float		distanceTemps;
+	private Vector2		_goTo;
 	
 	public BubbleStop(Stop s) {
+		order = -1;
+		_goTo = null;
+		_today = new Date();
 		stop = s;
 		slide = 0;
+		listStopTimes = Territory.instance().getListStopTimesByStopId(stop.stop_id);
 		distance = (float) Territory.distanceAB(You.instance().coordinate, stop.coord);
 		position = new Vector2();
-		_direction = new Vector2(GUI.random(-10, 10), GUI.random(-10, 10));
-		_inertie = 0.5f;
 		touch = false;
 		select = false;
 		_timeTouch = 0;
 		_timeSelect = 0;
+		refreshNextTime();
+	}
+	
+	public void	check() {
+		_direction = new Vector2(GUIController.random(-10, 10), GUIController.random(-10, 10));
+		_inertie = 2f;
+	}
+	
+	public void initPosition(Vector2 goTo) {
+		_goTo = goTo;
 	}
 	
 	public boolean collision(float x, float y) {
 		return (x >= position.x && x <= position.x + 40 * stop.stop_name.length() && y >= position.y - 50 && y <= position.y + 50);
+	}
+	
+	public boolean isFasterTo(BubbleStop other) {
+		return  (distanceTemps < other.distanceTemps);
 	}
 	
 	public void		move(float deltaX, float deltaY)
@@ -40,6 +67,26 @@ public class BubbleStop {
 		_inertie = 1;
 		_direction.x = deltaX;
 		_direction.y = deltaY;
+	}
+	
+	public void	refreshNextTime() {
+		Date d = new Date();
+		MyTimes tmp = null;
+		
+		Iterator<StopTimes> i = listStopTimes.iterator();
+		StopTimes stopTimes = null;
+		
+		while (i.hasNext())
+		{
+			stopTimes = i.next();
+			if (!stopTimes.departure_time.isBeforeTo(d))// && Territory.instance().isServiceAvailableByDate(Territory.instance().getTripsByTripId(stopTimes.trip_id).service_id, _today))
+			{
+				if (tmp == null || stopTimes.departure_time.isBeforeTo(tmp))
+					tmp = stopTimes.departure_time;
+			}
+		}
+		distanceTemps = distance / 5;
+		nextTime =  tmp;
 	}
 	
 	public Color	getColor() {
@@ -67,15 +114,29 @@ public class BubbleStop {
 		select = false;
 	}
 	
+	private	void goTo() {
+		position.x += (_goTo.x - position.x) * 0.1;
+		position.y += (_goTo.y - position.y) * 0.1;
+		if (position.x == _goTo.x && position.y == _goTo.y)
+			_goTo = null;
+	}
+	
 	public void update() {
 
+		if (_goTo != null)
+			goTo();
+		
 		position.x += _direction.x * _inertie;
 		position.y += _direction.y * _inertie;
 		
-		if (position.x > Gdx.graphics.getWidth() - 40 * stop.stop_name.length() / 2 || position.x < 40)
-			_direction.x *= -1;
-		if (position.y > Gdx.graphics.getHeight() || position.y < Gdx.graphics.getHeight() / 8)
-			_direction.y *= -1;
+		if (_goTo == null)
+		{
+			if (position.x > Gdx.graphics.getWidth() - 40 * stop.stop_name.length() / 2 || position.x < 40)
+				_direction.x *= -1;
+			if (position.y > Gdx.graphics.getHeight() || position.y < 5)
+				_direction.y *= -1;
+		}
+	
 		
 		if (_inertie > 0)
 		{

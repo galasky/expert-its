@@ -2,10 +2,7 @@ package com.me.mygdxgame;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -21,7 +18,7 @@ public class Game3D implements ApplicationListener {
 	private SkyBox					_skyBox;
 	public ModelBuilder 			modelBuilder;
     private Plate					_plate;
-    private	IGUI					_gui;
+    private	GUIController			_guiController;
     public CameraInputController	camController;
     private DirectionalLight		_light;
     public ModelBatch 				modelBatch;
@@ -54,7 +51,7 @@ public class Game3D implements ApplicationListener {
         environment.add(_light);
         _skyBox = new SkyBox(environment);
         _plate = new Plate(environment);
-        _gui = new GUI2();
+        _guiController = new GUIController();
         DetecteurGeste monDetecteurGeste = new DetecteurGeste();
 		Gdx.input.setInputProcessor(new GestureDetector (monDetecteurGeste));
     }
@@ -65,16 +62,16 @@ public class Game3D implements ApplicationListener {
     
     public void longPress()
     {
-    	_gui = _gui.inverte();
+    	_guiController.invert();
     }
 
     public void	touchScreen(float x, float y, float deltaX, float deltaY) {
-    	_gui.touche(x, y, deltaX, deltaY);
+    	_guiController.touch(x, y, deltaX, deltaY);
     }
     
     public void tap(float x, float y)
     {
-    	_gui.tap(x, y);
+    	_guiController.tap(x, y);
     }
    
     public void sleep(int fps) {
@@ -101,7 +98,7 @@ public class Game3D implements ApplicationListener {
     	modelBatch.begin(_cam.pCam);
         modelBatch.render(Game3D.instance().instances);
         modelBatch.end();
-        _gui.render();
+        _guiController.render();
         sleep(60);
     }
      

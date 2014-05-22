@@ -21,10 +21,10 @@ public class Plate {
     private MyCamera				_cam;
     public int						nbStopSelect;
     private Territory 				territory;
-    public double					distance;
     private You						_you;
     public Array<ModelInstance>		Stopinstances;
     private Environment				_environment;
+    private	LoadListStop			_loadListStop;
     
     public Plate (Environment environment)
     {
@@ -32,9 +32,9 @@ public class Plate {
     	_cam = MyCamera.instance();
     	_environment = environment;
     	_you = You.instance();
+    	//_loadListStop = new LoadListStop();
     	territory = Territory.instance();
 
-        distance = 0.5;
         Stopinstances = new Array<ModelInstance>();
         Game3D.instance().instances = new Array<ModelInstance>();
     	_you.load();
@@ -49,11 +49,11 @@ public class Plate {
     }
     
     public void setListStop() {
-    	_world.listStop = territory.getListStopByDistance(distance, _you.coordinate);
+    	_world.listStop = territory.getListStopByDistance(Config.instance().distance, _you.coordinate);
     	loadStopInstances();
     }
-    
-    public void loadStopInstances() 
+ 
+    private void loadStopInstances() 
     {
      	if (_world.listStop != null)
     	{

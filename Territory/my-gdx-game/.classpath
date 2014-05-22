@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="C:/Users/Administrateur/Downloads/adt-bundle-windows-x86_64-20140321/adt-bundle-windows-x86_64-20140321/sdk/platforms/android-19/android.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-backend-jglfw.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/joda-time-2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

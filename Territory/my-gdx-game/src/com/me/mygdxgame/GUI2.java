@@ -1,26 +1,23 @@
 package com.me.mygdxgame;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 
 public class GUI2 implements IGUI {
 	private SpriteBatch			_spriteBatch;
-	private ShapeRenderer		_shapeRenderer;
 	private BitmapFont			_font;
+	private boolean				_initPosition;
 	private String				_str;
 	private World				_world;
-	private boolean				_loadBubble;
 	private BubbleStop			_bubbleSelect;
 
 	public GUI2() {
-		_shapeRenderer = new ShapeRenderer();
 		_str = new String();
 		_world = World.instance();
 		_spriteBatch = new SpriteBatch();
@@ -28,33 +25,11 @@ public class GUI2 implements IGUI {
     	_font.setColor(Color.GREEN);
         _font.setScale(3F, 3F);
         _bubbleSelect = null;
-        _loadBubble = true;
+        initPosition();
 	}
 	
 	static int random(int Min, int Max) {
 		return (int) (Min + (Math.random() * ((Max - Min) + 1)));
-	}
-	
-	private void loadBubbleStop() {
-		if (_world.listStop != null)
-		{
-			_world.listBubbleStop = new ArrayList<BubbleStop>();
-			Iterator<Stop> i = _world.listStop.iterator();
-	    	Stop stop;
-	    	int	nb = 0;
-	    	
-	    	while (i.hasNext())
-	    	{
-	    		stop = i.next();
-	    		BubbleStop bubble = new BubbleStop(stop);
-	    		bubble.position.x = 40;
-	    		bubble.position.y = 50 * nb;
-	    		bubble.min = random(1, 8);
-	    		_world.listBubbleStop.add(bubble);
-	    		nb++;
-	    	}
-	    	_loadBubble = false;
-		}
 	}
 	
 	@Override
@@ -82,7 +57,7 @@ public class GUI2 implements IGUI {
 	}
 	
 	@Override
-	public void touche(float x, float y, float deltaX, float deltaY)
+	public void touch(float x, float y, float deltaX, float deltaY)
 	{
 		//_str = "x = " + x + " y = " + y + " deltaX = " + deltaX + " deltaY = " + deltaY;
 		if (_world.listBubbleStop == null)
@@ -105,6 +80,8 @@ public class GUI2 implements IGUI {
 	}
 	
 	private void updateBubbleStop() {
+		if (_world.listBubbleStop == null)
+			return ;
 		Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
 		BubbleStop bubbleStop = null;
 		while (i.hasNext())
@@ -114,9 +91,39 @@ public class GUI2 implements IGUI {
 		}
 	}
 	
+	private void refreshOrder() {
+		/*Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
+		BubbleStop bubbleStop = null;
+		int nb = 0;
+		while (i.hasNext())
+		{
+			bubbleStop = i.next();
+			bubbleStop.initPosition(new Vector2(50, 50 + bubbleStop.order * 50));
+			nb++;
+		}*/
+	}
+
+	public void	initPosition() {
+		_initPosition = true;
+		if (_world.listBubbleStop == null)
+			return ;
+		
+		Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
+		BubbleStop bubbleStop = null;
+		int nb = 0;
+		while (i.hasNext())
+		{
+			bubbleStop = i.next();
+			bubbleStop.initPosition(new Vector2(50, 50 + nb * 50));
+			nb++;
+		}
+		_initPosition = false;
+	}
+	
 	private void renderAll() {
 		if (_world.listStop != null)
 		{
+			Date d = new Date();
 			_spriteBatch.begin();
 			Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
 			BubbleStop bubbleStop = null;
@@ -125,10 +132,29 @@ public class GUI2 implements IGUI {
 				bubbleStop = i.next();
 				_font.setColor(new Color(1, 1, 1, 1));
 				//_font.setColor((bubbleStop.touch ? Color.YELLOW : Color.GREEN));
-				_font.setColor(Color.WHITE);
+				if (bubbleStop.nextTime != null)
+				{
+					int diff = bubbleStop.nextTime.diff(d);
+					if (diff > (int) (bubbleStop.distanceTemps * 60))
+						_font.setColor(Color.GREEN);
+					else if ((int) (bubbleStop.distanceTemps * 60) == diff)
+						_font.setColor(Color.ORANGE);
+					else
+						_font.setColor(Color.RED);
+				}
+				else
+				{
+					_font.setColor(Color.GRAY);
+				}
+				
 				_font.draw(_spriteBatch, bubbleStop.stop.stop_name, bubbleStop.position.x, bubbleStop.position.y);
 				_font.draw(_spriteBatch, (int) (bubbleStop.distance * 1000) + "m", bubbleStop.position.x + 400, bubbleStop.position.y);
-				_font.draw(_spriteBatch, bubbleStop.min + "min", bubbleStop.position.x + 900, bubbleStop.position.y);
+				if (bubbleStop.nextTime != null)
+					_font.draw(_spriteBatch, bubbleStop.nextTime.getString(), bubbleStop.position.x + 600, bubbleStop.position.y);
+				else
+					_font.draw(_spriteBatch, "Fin du service", bubbleStop.position.x + 600, bubbleStop.position.y);
+				_font.draw(_spriteBatch, (int) (bubbleStop.distanceTemps * 60) + " min", bubbleStop.position.x + 900, bubbleStop.position.y);
+				//_font.draw(_spriteBatch, diff + "", bubbleStop.position.x + 1100, bubbleStop.position.y);
 			}
 			//_font.draw(_spriteBatch,_str, 20, 100);
 			_spriteBatch.end();
@@ -147,14 +173,19 @@ public class GUI2 implements IGUI {
 	
 	@Override
 	public void render() {
-		if (_loadBubble)
-			loadBubbleStop();
-		
+		if (_initPosition == true)
+			initPosition();
+		updateBubbleStop();
 		renderAll();
 	}
 
 	@Override
-	public IGUI inverte() {
+	public IGUI invert() {
 		return new GUI();
+	}
+
+	@Override
+	public void refresh() {
+		initPosition();
 	}
 }
