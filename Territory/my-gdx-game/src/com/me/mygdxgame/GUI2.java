@@ -121,7 +121,7 @@ public class GUI2 implements IGUI {
 	}
 	
 	private void renderAll() {
-		if (_world.listStop != null)
+		if (StationManager.instance().getListStation() != null && _world.listBubbleStop != null)
 		{
 			Date d = new Date();
 			_spriteBatch.begin();
@@ -130,45 +130,19 @@ public class GUI2 implements IGUI {
 			while (i.hasNext())
 			{
 				bubbleStop = i.next();
-				_font.setColor(new Color(1, 1, 1, 1));
-				//_font.setColor((bubbleStop.touch ? Color.YELLOW : Color.GREEN));
-				if (bubbleStop.nextTime != null)
-				{
-					int diff = bubbleStop.nextTime.diff(d);
-					if (diff > (int) (bubbleStop.distanceTemps * 60))
-						_font.setColor(Color.GREEN);
-					else if ((int) (bubbleStop.distanceTemps * 60) == diff)
-						_font.setColor(Color.ORANGE);
-					else
-						_font.setColor(Color.RED);
-				}
-				else
-				{
-					_font.setColor(Color.GRAY);
-				}
-				
-				_font.draw(_spriteBatch, bubbleStop.stop.stop_name, bubbleStop.position.x, bubbleStop.position.y);
-				_font.draw(_spriteBatch, (int) (bubbleStop.distance * 1000) + "m", bubbleStop.position.x + 400, bubbleStop.position.y);
-				if (bubbleStop.nextTime != null)
-					_font.draw(_spriteBatch, bubbleStop.nextTime.getString(), bubbleStop.position.x + 600, bubbleStop.position.y);
-				else
-					_font.draw(_spriteBatch, "Fin du service", bubbleStop.position.x + 600, bubbleStop.position.y);
-				_font.draw(_spriteBatch, (int) (bubbleStop.distanceTemps * 60) + " min", bubbleStop.position.x + 900, bubbleStop.position.y);
+				_font.setColor(Color.WHITE);
+				_font.draw(_spriteBatch, bubbleStop.station.name, bubbleStop.position.x, bubbleStop.position.y);
+				//_font.draw(_spriteBatch, (int) (bubbleStop.distance * 1000) + "m", bubbleStop.position.x + 400, bubbleStop.position.y);
+				//if (bubbleStop.nextTime != null)
+				//	_font.draw(_spriteBatch, bubbleStop.nextTime.getString(), bubbleStop.position.x + 600, bubbleStop.position.y);
+				//else
+				//	_font.draw(_spriteBatch, "Fin du service", bubbleStop.position.x + 600, bubbleStop.position.y);
+				//_font.draw(_spriteBatch, (int) (bubbleStop.distanceTemps * 60) + " min", bubbleStop.position.x + 900, bubbleStop.position.y);
 				//_font.draw(_spriteBatch, diff + "", bubbleStop.position.x + 1100, bubbleStop.position.y);
 			}
 			//_font.draw(_spriteBatch,_str, 20, 100);
 			_spriteBatch.end();
 		}
-	}
-	
-	private void renderSelect() {
-		_spriteBatch.begin();
-		_font.setColor(new Color(1, 1, 1, 1));
-		//_font.setColor((bubbleStop.touch ? Color.YELLOW : Color.GREEN));
-		_font.setColor(_bubbleSelect.getColor());
-		_font.draw(_spriteBatch, _bubbleSelect.stop.stop_name, _bubbleSelect.position.x, _bubbleSelect.position.y);
-		_font.draw(_spriteBatch, "distance " + _bubbleSelect.distance, _bubbleSelect.position.x, _bubbleSelect.position.y - 50);
-		_spriteBatch.end();
 	}
 	
 	@Override

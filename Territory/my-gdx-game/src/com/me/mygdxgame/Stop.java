@@ -1,5 +1,7 @@
 package com.me.mygdxgame;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -7,9 +9,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Stop {
 
-	public Vector2	position;
+	public List<StopTimes>	listStopTimes;
+	public MyTimes	nextTime;
 	public boolean	select;
-	public ModelInstance instance;
     public String stop_id;
     public String stop_code;
     public String stop_name;
@@ -25,11 +27,33 @@ public class Stop {
     public CoordinateGPS coord = new CoordinateGPS();
 
     public Stop(){
-    	instance = null;
-    	position = new Vector2();
     	select = false;
     }
 
+    public void	getListStopTimes() {
+    	listStopTimes = Territory.instance().getListStopTimesByStopId(stop_id);
+    	refreshNextTime();
+    }
+	
+	public void	refreshNextTime() {
+		Date d = new Date();
+		MyTimes tmp = null;
+		
+		Iterator<StopTimes> i = listStopTimes.iterator();
+		StopTimes stopTimes = null;
+		
+		while (i.hasNext())
+		{
+			stopTimes = i.next();
+			if (!stopTimes.departure_time.isBeforeTo(d))// && Territory.instance().isServiceAvailableByDate(Territory.instance().getTripsByTripId(stopTimes.trip_id).service_id, _today))
+			{
+				if (tmp == null || stopTimes.departure_time.isBeforeTo(tmp))
+					tmp = stopTimes.departure_time;
+			}
+		}
+		nextTime =  tmp;
+	}
+	
     public void setCoord(CoordinateGPS c) {coord.longitude = c.longitude; coord.latitude = c.latitude;}
 
     public void setCoord(double lat, double lon) {coord.latitude = lat; coord.longitude = lon;}

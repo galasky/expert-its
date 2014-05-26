@@ -3,7 +3,8 @@ package com.me.mygdxgame;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
+
+import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -20,8 +21,10 @@ public class GUIController {
 	private Date		_date;
 	private String		_sDate;
 	private	RefreshGUI	_refreshGUI;
+	private StationManager	stationManager;
 	
 	public GUIController() {
+		stationManager = StationManager.instance();
 		_date = new Date();
 		_time = 0;
 		_gui = new GUI();
@@ -31,8 +34,8 @@ public class GUIController {
 		_font = new BitmapFont();
     	_font.setColor(Color.GREEN);
         _font.setScale(3F, 3F);
-        //_refreshGUI = new RefreshGUI(_gui);
-        //_refreshGUI.start();
+        _refreshGUI = new RefreshGUI(_gui);
+        _refreshGUI.start();
         
 	}
 	
@@ -74,42 +77,23 @@ public class GUIController {
 	}*/
 	
 	private void loadBubbleStop() {
-		if (_world.listStop != null)
+		if (stationManager.loadFinish() && stationManager.getListStation() != null)
 		{
 			_world.listBubbleStop = new ArrayList<BubbleStop>();
-			Iterator<Stop> i = _world.listStop.iterator();
-	    	Stop stop;
+			Iterator<Station> i = stationManager.getListStation().iterator();
+	    	Station station;
 	    	int	nb = 0;
-	    	
 	    	while (i.hasNext())
 	    	{
-	    		stop = i.next();
-	    		BubbleStop bubble = new BubbleStop(stop);
-	    		bubble.position.x = random(40, Gdx.graphics.getWidth() - 40 * stop.stop_name.length() / 2);
+	    		station = i.next();
+	    		BubbleStop bubble = new BubbleStop(station);
+	    		bubble.position.x = random(40, Gdx.graphics.getWidth() - 40 * station.name.length() / 2);
 	    		bubble.position.y = random(Gdx.graphics.getHeight(), Gdx.graphics.getHeight() - Gdx.graphics.getHeight() / 8);
-	    		if (_world.listBubbleStop.size() == 0)
-	    			_world.listBubbleStop.add(0, bubble);
-	    		else
-	    		{
-	    			BubbleStop tmp;
-	    			boolean find = false;
-	    			for (int u = 0; find == false && u < _world.listBubbleStop.size(); u++)
-	    			{
-	    				tmp = _world.listBubbleStop.get(u);
-	    				if (bubble.isFasterTo(tmp))
-	    				{
-	    					_world.listBubbleStop.add(u, bubble);
-	    					find = true;
-	    				}
-	    			}
-	    			if (find == false)
-	    			{
-	    				_world.listBubbleStop.add(bubble);
-	    			}
-	    		}
+	    		_world.listBubbleStop.add(bubble);
+	    		Log.d("ok", "galasky add bubble");
+	    		_loadBubble = false;
 	    		nb++;
 	    	}
-	    	_loadBubble = false;
 		}
 	}
 
@@ -125,12 +109,15 @@ public class GUIController {
 	}
 
 	public void	render() {
-		if (_loadBubble)
-			loadBubbleStop();
 		updateTime();
 		MyTimes time = new MyTimes(new Date());
 		
 		_spriteBatch.begin();
+		if (AssetManager.instance().loading)
+		{
+			_font.setColor(Color.BLUE);
+			_font.draw(_spriteBatch, "Loading ...", Gdx.graphics.getWidth() / 2 - 40 * 6, Gdx.graphics.getHeight() / 2);
+		}
 		_font.setColor(Color.WHITE);
 		_font.draw(_spriteBatch, time.hours + ":" + (time.minutes < 10 ? "0"+time.minutes : time.minutes), 40, Gdx.graphics.getHeight() - 40);
 		_spriteBatch.end();
@@ -148,7 +135,7 @@ public class GUIController {
 	public void tap(float x, float y) {
 		_gui.tap(x, y);
 	}
-	public void	refreshBubbleStop() {
+	/*public void	refreshBubbleStop() {
 		if (_world.listBubbleStop == null)
 			return ;
 		List<BubbleStop>	listTmp = new ArrayList<BubbleStop>();
@@ -186,5 +173,5 @@ public class GUIController {
     		}
 		}
 		_world.listBubbleStop = listTmp;
-	}
+	}*/
 }

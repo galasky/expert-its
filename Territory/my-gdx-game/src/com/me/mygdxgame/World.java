@@ -4,13 +4,12 @@ import java.util.List;
 
 
 public class World {
-	
-	public List<Stop> 				listStop;
 	public List<BubbleStop> 		listBubbleStop;
+	public	LoadListStop			loadListStop;
 	
 	private	World() {
-        listStop = null;
         listBubbleStop = null;
+        loadListStop = new LoadListStop();
 	}
 	
 	public static World instance() {

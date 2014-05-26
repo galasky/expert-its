@@ -12,9 +12,12 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 public class MainActivity extends AndroidApplication implements LocationListener {
 
 	private LocationManager lm;
+	private LoadListStop _loadListStop;
+	private TestThread	test;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	test = new TestThread();
         super.onCreate(savedInstanceState);
         
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
@@ -23,6 +26,7 @@ public class MainActivity extends AndroidApplication implements LocationListener
         cfg.useCompass = true;
         Territory territory = Territory.instance();
         territory.setContext(this);
+        _loadListStop = new LoadListStop();
         initialize(Game3D.instance(), cfg);
     }
     
@@ -46,8 +50,14 @@ public class MainActivity extends AndroidApplication implements LocationListener
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
+
 		Log.d("ok", "galasky LOCATION");
-		You.instance().setPosition(location);
+		if (World.instance().loadListStop.loaded == false)
+			World.instance().loadListStop.location = location;
+		else
+			You.instance().setPosition(location);
+		Log.d("ok", "galasky END LOCATION");
+//		You.instance().setPosition(location);
 	}
 	@Override
 	public void onProviderDisabled(String arg0) {

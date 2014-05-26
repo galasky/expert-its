@@ -6,7 +6,10 @@ package com.me.mygdxgame;
  */
 public class CoordinateGPS {
 
-    public CoordinateGPS() {}
+    public CoordinateGPS() {
+    	longitude = 0;
+    	latitude = 0;
+    }
 
     public CoordinateGPS(double la, double lo) {
         longitude = lo;

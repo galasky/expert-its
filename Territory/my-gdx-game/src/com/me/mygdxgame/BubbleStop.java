@@ -12,36 +12,41 @@ import com.badlogic.gdx.math.Vector2;
 
 public class BubbleStop {
 	public Vector2		position;
-	public List<StopTimes>	listStopTimes;
+	//public List<StopTimes>	listStopTimes;
 	private Vector2		_direction;
 	public	float		slide;
-	public Stop			stop;
+	public Station		station;
 	public int			order;
 	private float		_inertie;
-	public	float		distance;
+	//public	float		distance;
 	public boolean		touch;
 	private float		_timeTouch;
 	private float		_timeSelect;
-	public MyTimes		nextTime;
+	//public MyTimes		nextTime;
 	public boolean		select;
 	private Date		_today;
-	public float		distanceTemps;
+	private SoundManager	soundManager;
+	//public float		distanceTemps;
 	private Vector2		_goTo;
 	
-	public BubbleStop(Stop s) {
+	public BubbleStop(Station s) {
+		soundManager = SoundManager.instance();
+		soundManager.get("pop.mp3").play();
 		order = -1;
 		_goTo = null;
 		_today = new Date();
-		stop = s;
+		station = s;
 		slide = 0;
-		listStopTimes = Territory.instance().getListStopTimesByStopId(stop.stop_id);
-		distance = (float) Territory.distanceAB(You.instance().coordinate, stop.coord);
+		//listStopTimes = Territory.instance().getListStopTimesByStopId(station.stops.get(0).stop_id);
+		//distance = (float) Territory.distanceAB(You.instance().coordinate, station.stops.get(0).coord);
+		//distanceTemps = distance / 5;
 		position = new Vector2();
 		touch = false;
 		select = false;
 		_timeTouch = 0;
 		_timeSelect = 0;
-		refreshNextTime();
+		check();
+		//refreshNextTime();
 	}
 	
 	public void	check() {
@@ -54,11 +59,7 @@ public class BubbleStop {
 	}
 	
 	public boolean collision(float x, float y) {
-		return (x >= position.x && x <= position.x + 40 * stop.stop_name.length() && y >= position.y - 50 && y <= position.y + 50);
-	}
-	
-	public boolean isFasterTo(BubbleStop other) {
-		return  (distanceTemps < other.distanceTemps);
+		return (x >= position.x && x <= position.x + 40 * station.name.length() && y >= position.y - 50 && y <= position.y + 50);
 	}
 	
 	public void		move(float deltaX, float deltaY)
@@ -69,7 +70,7 @@ public class BubbleStop {
 		_direction.y = deltaY;
 	}
 	
-	public void	refreshNextTime() {
+	/*public void	refreshNextTime() {
 		Date d = new Date();
 		MyTimes tmp = null;
 		
@@ -87,20 +88,7 @@ public class BubbleStop {
 		}
 		distanceTemps = distance / 5;
 		nextTime =  tmp;
-	}
-	
-	public Color	getColor() {
-		distance = (float) Territory.distanceAB(You.instance().coordinate, stop.coord);
-		if (distance < 0.3)
-		{
-			return Color.GREEN;
-		}
-		if (distance > 0.3 && distance < 0.45)
-		{
-			return Color.ORANGE;
-		}
-		return Color.RED;
-	}
+	}*/
 	
 	public void select()
 	{
@@ -131,7 +119,7 @@ public class BubbleStop {
 		
 		if (_goTo == null)
 		{
-			if (position.x > Gdx.graphics.getWidth() - 40 * stop.stop_name.length() / 2 || position.x < 40)
+			if (position.x > Gdx.graphics.getWidth() - 40 * station.name.length() / 2 || position.x < 40)
 				_direction.x *= -1;
 			if (position.y > Gdx.graphics.getHeight() || position.y < 5)
 				_direction.y *= -1;

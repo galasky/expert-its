@@ -83,30 +83,19 @@ public class GUI implements IGUI {
 	}
 	
 	private void renderAll() {
-		if (_world.listStop != null && _world.listBubbleStop != null)
+	//	Log.d("gakla", "galasky SIZE RENDER LISTE BUBBLE STOP " + _world.listBubbleStop.size());
+	//	Log.d("gakla", "galasky SIZE RENDER LISTE STATION " + _world.stationManager.getListStation().size());
+		if (StationManager.instance().getListStation() != null && _world.listBubbleStop != null)
 		{
 			Date d = new Date();
 			_spriteBatch.begin();
 			Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
 			BubbleStop bubbleStop = null;
+			_font.setColor(Color.WHITE);
 			while (i.hasNext())
 			{
 				bubbleStop = i.next();
-				if (bubbleStop.nextTime != null)
-				{
-					int diff = bubbleStop.nextTime.diff(d);
-					if (diff > (int) (bubbleStop.distanceTemps * 60))
-						_font.setColor(Color.GREEN);
-					else if ((int) (bubbleStop.distanceTemps * 60) == diff)
-						_font.setColor(Color.ORANGE);
-					else
-						_font.setColor(Color.RED);
-				}
-				else
-				{
-					_font.setColor(Color.GRAY);
-				}
-				_font.draw(_spriteBatch, bubbleStop.stop.stop_name, bubbleStop.position.x, bubbleStop.position.y);
+				_font.draw(_spriteBatch, bubbleStop.station.name, bubbleStop.position.x, bubbleStop.position.y);
 			}
 			//_font.draw(_spriteBatch,_str, 20, 100);
 			_spriteBatch.end();
@@ -116,27 +105,20 @@ public class GUI implements IGUI {
 	private void renderSelect() {
 		_spriteBatch.begin();
 		Date d = new Date();
-		if (_bubbleSelect.nextTime != null)
+		_font.setColor(Color.WHITE);
+		_font.draw(_spriteBatch, _bubbleSelect.station.name, _bubbleSelect.position.x, _bubbleSelect.position.y);
+		
+		Iterator<Stop> i = _bubbleSelect.station.stops.iterator();
+		int nb = 0;
+		while (i.hasNext())
 		{
-			int diff = _bubbleSelect.nextTime.diff(d);
-			if (diff > (int) (_bubbleSelect.distanceTemps * 60))
-				_font.setColor(Color.GREEN);
-			else if ((int) (_bubbleSelect.distanceTemps * 60) == diff)
-				_font.setColor(Color.ORANGE);
-			else
-				_font.setColor(Color.RED);
+			Stop stop = i.next();
+			if (stop.nextTime != null)
+			{
+				nb++;
+				_font.draw(_spriteBatch, (int) (_bubbleSelect.station.distanceTemps * 60) + " min marche + " + stop.nextTime.diff(new Date()) + " min " + stop.nextTime.getString(), _bubbleSelect.position.x, _bubbleSelect.position.y - nb * _bubbleSelect.slide);
+			}
 		}
-		else
-		{
-			_font.setColor(Color.GRAY);
-		}
-		_font.draw(_spriteBatch, _bubbleSelect.stop.stop_name, _bubbleSelect.position.x, _bubbleSelect.position.y);
-		_font.draw(_spriteBatch, "Distance          : "  + (int) (_bubbleSelect.distance * 1000) + "m", _bubbleSelect.position.x, _bubbleSelect.position.y - 2 * _bubbleSelect.slide);
-		_font.draw(_spriteBatch, "Marche à pied : " + (int) (_bubbleSelect.distanceTemps * 60) + " min", _bubbleSelect.position.x, _bubbleSelect.position.y - 3 * _bubbleSelect.slide);
-		if (_bubbleSelect.nextTime != null)
-			_font.draw(_spriteBatch, "Heure arrivé    : " + _bubbleSelect.nextTime.getString(), _bubbleSelect.position.x, _bubbleSelect.position.y - 4 * _bubbleSelect.slide);
-		else
-			_font.draw(_spriteBatch, "Fin du service", _bubbleSelect.position.x, _bubbleSelect.position.y - 4 * _bubbleSelect.slide);
 		_spriteBatch.end();
 		
 		if (_bubbleSelect.select == false && _bubbleSelect.slide <= 0)

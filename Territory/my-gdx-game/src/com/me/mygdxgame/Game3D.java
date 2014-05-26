@@ -1,5 +1,7 @@
 package com.me.mygdxgame;
 
+import android.util.Log;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -39,9 +41,15 @@ public class Game3D implements ApplicationListener {
         private final static Game3D instance = new Game3D();
     }
 	
+	public void loadSound() {
+		SoundManager soundManager = SoundManager.instance();
+		
+		soundManager.load("pop.mp3");
+	}
+	
     @Override
     public void create () {
-    	
+    	loadSound();
     	_cam = MyCamera.instance();
     	modelBuilder = new ModelBuilder();
     	modelBatch = new ModelBatch();
@@ -88,7 +96,7 @@ public class Game3D implements ApplicationListener {
     }
     
     @Override
-    public void render () {   
+    public void render () { 
         _cam.update();
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -96,7 +104,7 @@ public class Game3D implements ApplicationListener {
         _skyBox.render();
         _plate.update();
     	modelBatch.begin(_cam.pCam);
-        modelBatch.render(Game3D.instance().instances);
+        modelBatch.render(instances);
         modelBatch.end();
         _guiController.render();
         sleep(60);
