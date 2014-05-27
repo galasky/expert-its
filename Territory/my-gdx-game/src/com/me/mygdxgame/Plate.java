@@ -36,7 +36,6 @@ public class Plate {
     	territory = Territory.instance();
 
         Stopinstances = new Array<ModelInstance>();
-        Game3D.instance().instances = new Array<ModelInstance>();
     	_you.load();
     	Game3D.instance().instances.add(_you.modelInstance);
         nbStopSelect = 0;

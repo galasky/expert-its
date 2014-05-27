@@ -17,6 +17,7 @@ public class GUIController {
 	private float		_time;
 	private boolean		_loadBubble;
 	private SpriteBatch	_spriteBatch;
+	private ZoomController	_zoomController;
 	private BitmapFont	_font;
 	private Date		_date;
 	private String		_sDate;
@@ -25,6 +26,7 @@ public class GUIController {
 	
 	public GUIController() {
 		stationManager = StationManager.instance();
+		_zoomController = new ZoomController();
 		_date = new Date();
 		_time = 0;
 		_gui = new GUI();
@@ -113,15 +115,11 @@ public class GUIController {
 		MyTimes time = new MyTimes(new Date());
 		
 		_spriteBatch.begin();
-		if (AssetManager.instance().loading)
-		{
-			_font.setColor(Color.BLUE);
-			_font.draw(_spriteBatch, "Loading ...", Gdx.graphics.getWidth() / 2 - 40 * 6, Gdx.graphics.getHeight() / 2);
-		}
 		_font.setColor(Color.WHITE);
 		_font.draw(_spriteBatch, time.hours + ":" + (time.minutes < 10 ? "0"+time.minutes : time.minutes), 40, Gdx.graphics.getHeight() - 40);
 		_spriteBatch.end();
 		_gui.render();
+		_zoomController.render();
 	}
 	
 	public void	invert() {
@@ -130,6 +128,7 @@ public class GUIController {
 	
 	public void touch(float x, float y, float deltaX, float deltaY) {
 		_gui.touch(x, y, deltaX, deltaY);
+		_zoomController.touch(x, y, deltaX, deltaY);
 	}
 	
 	public void tap(float x, float y) {

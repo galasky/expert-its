@@ -3,13 +3,15 @@ package com.me.mygdxgame;
 import android.location.Location;
 import android.util.Log;
 
-import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 
@@ -40,22 +42,14 @@ public class You {
 	public void load() {
     	Model model;
         
-        Texture floor = new Texture("data/radar.png");
+        Texture floor = new Texture("data/cadrillage.png");
       	model = modelBuilder.createBox(50f, .5f, 50f, 
       	new Material(TextureAttribute.createDiffuse(floor)), Usage.Position | Usage.Normal | Usage.TextureCoordinates);
       	modelInstance = new ModelInstance(model);
       	modelInstance.transform.setToTranslation(0, -1f, 0);
-      	_loaded = true;
+       	_loaded = true;
 	}
 	
-	public void loadModel(AssetManager assets, String path) {
-		Log.d("ok", "galasky LOAD MODEL");
-		Model model = assets.get(path, Model.class);
-    	modelInstance = new ModelInstance(model);
-    	modelInstance.transform.setToTranslation(0, 0, 0);
-    	modelInstance.transform.rotate(new Vector3(0, 1, 0), 29.1F);
-    	_loaded = true;
-	}
 	
 	public boolean isLoaded() {
 		return _loaded;

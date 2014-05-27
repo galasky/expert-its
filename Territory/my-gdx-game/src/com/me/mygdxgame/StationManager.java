@@ -82,19 +82,23 @@ public class StationManager {
 		Model model;
         ModelInstance instance;
 		
-        model = Game3D.instance().modelBuilder.createBox(.2f, .2f, .2f, 
+        /*model = Game3D.instance().modelBuilder.createBox(.2f, .2f, .2f, 
         new Material(ColorAttribute.createDiffuse(Color.RED)),
-        Usage.Position | Usage.Normal);
-
+        Usage.Position | Usage.Normal);*/
+        model = Game3D.instance().assets.get("data/steve/steve.obj", Model.class);
     	decal.x = (float) Territory.distanceAB(_you.coordinate, new CoordinateGPS(station.coord.latitude, _you.coordinate.longitude)) * 10 * (station.coord.latitude > _you.coordinate.latitude ? 1 : -1);
     	decal.z = (float) Territory.distanceAB(_you.coordinate, new CoordinateGPS(_you.coordinate.latitude, station.coord.longitude)) * 10 *(station.coord.longitude > _you.coordinate.longitude ? 1 : -1);
 
         instance = new ModelInstance(model);
          	        
 	    instance.transform.setToTranslation(decal.x, .5f, decal.z);
+	    instance.transform.scale(0.1f, 0.1f, 0.1f);
 	    station.position.x = decal.z;
 	    station.position.y = decal.x;
 	    station.instance = instance;
+	    //	Game3D.instance().instances.add(instance);
+	    //model = Game3D.instance().assets.get("data/steve/steve.obj", Model.class);
+	    //ModelInstance Steve = new ModelInstance(model);
 	    Game3D.instance().instances.add(instance);
 	}
 	

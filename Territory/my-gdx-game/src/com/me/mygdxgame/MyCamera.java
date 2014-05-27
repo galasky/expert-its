@@ -18,14 +18,16 @@ public class MyCamera {
 	private Vector3				_look;
 	public boolean				firstPerson;
 	private ArrayList<Float>	_tab;
+	private float 				_zoomTo;
 	
 	private	MyCamera() {
+		_zoomTo = 10;
 		firstPerson = false;
 		_tab = new ArrayList<Float>();
 		_zoom = 10;
         _angleFiltre = 0;
-        pCam = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        pCam = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        pCam = new PerspectiveCamera(70, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        pCam = new PerspectiveCamera(70, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         _look = new Vector3(1, 0, 0);
         pCam.lookAt(0,0,0);
         pCam.near = 1f;
@@ -55,6 +57,10 @@ public class MyCamera {
 		return m / _tab.size();
 	}
 	
+	public void	zoomTo(float zoomTo) {
+		_zoomTo = zoomTo;
+	}
+	
 	private void filtre() {
 		if (Math.abs(_angleBoussole + Math.PI * 2 - _angleFiltre) < 1)
 			_angleBoussole += Math.PI * 2;
@@ -80,6 +86,10 @@ public class MyCamera {
 	
 	public void update() {
 		_angleBoussole = (float) ((Math.PI * Gdx.input.getAzimuth()) / 180);
+		if (Math.abs(_zoomTo - _zoom) < 1)
+			_zoom = _zoomTo;
+		else
+			_zoom += (_zoomTo > _zoom ? 0.5 : -0.5);
 		filtre();
 		if (firstPerson == true)
 			firstPerson();

@@ -4,8 +4,10 @@ import android.util.Log;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -13,6 +15,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class Game3D implements ApplicationListener {
@@ -23,14 +26,17 @@ public class Game3D implements ApplicationListener {
     private	GUIController			_guiController;
     public CameraInputController	camController;
     private DirectionalLight		_light;
+    public AssetManager				assets;
     public ModelBatch 				modelBatch;
     public Environment 				environment;
     public boolean 					loading;
     public Array<ModelInstance>		instances;
+    public Array<ModelInstance>		perso;
     private long 					diff, start;
     
     private Game3D() {
     	start = System.currentTimeMillis(); 
+    	loading = false;
     }
     
 	public static Game3D instance() {
@@ -47,9 +53,26 @@ public class Game3D implements ApplicationListener {
 		soundManager.load("pop.mp3");
 	}
 	
+	public void loadModel() {
+		assets.load("data/steve/steve.obj", Model.class);
+		loading = true;
+	}
+	
+    private void doneLoading() {
+    	
+        ModelInstance Steve = new ModelInstance(assets.get("data/steve/steve.obj", Model.class));
+        Steve.transform.scale(0.2f, 0.2f, 0.2f);
+        perso.add(Steve);
+        loading = false;
+    }
+	
     @Override
     public void create () {
+    	instances = new Array<ModelInstance>();
+    	perso = new Array<ModelInstance>();
+    	assets = new AssetManager();
     	loadSound();
+    	loadModel();
     	_cam = MyCamera.instance();
     	modelBuilder = new ModelBuilder();
     	modelBatch = new ModelBatch();
@@ -96,7 +119,9 @@ public class Game3D implements ApplicationListener {
     }
     
     @Override
-    public void render () { 
+    public void render () {
+    	if (loading && assets.update())
+            doneLoading();
         _cam.update();
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -104,7 +129,9 @@ public class Game3D implements ApplicationListener {
         _skyBox.render();
         _plate.update();
     	modelBatch.begin(_cam.pCam);
+    	
         modelBatch.render(instances);
+        modelBatch.render(perso);
         modelBatch.end();
         _guiController.render();
         sleep(60);
