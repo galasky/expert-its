@@ -19,8 +19,11 @@ public class StationManager {
 	private boolean					_loadFinish;
 	private You						_you;
 	private List<Station>			listStation;
+	private List<BubbleStop>		listTmp;
+	public boolean					endDraw;
 	
 	private StationManager () {
+		listTmp = new ArrayList<BubbleStop>();
 		listStation = null;
 		_you = You.instance();
 		_loadFinish = false;
@@ -108,6 +111,20 @@ public class StationManager {
 		bubble.position.y = GUIController.random(Gdx.graphics.getHeight(), Gdx.graphics.getHeight() - Gdx.graphics.getHeight() / 8);
 		if (World.instance().listBubbleStop == null)
 			World.instance().listBubbleStop = new ArrayList<BubbleStop>();
-		World.instance().listBubbleStop.add(bubble);
+		if (endDraw)
+		{
+			listTmp.add(bubble);
+			
+			Iterator<BubbleStop> it = listTmp.iterator();
+			while (it.hasNext())
+			{
+				BubbleStop b = it.next();
+				World.instance().listBubbleStop.add(b);
+			}
+			listTmp.clear();
+		}
+			
+		else
+			listTmp.add(bubble);
 	}
 }

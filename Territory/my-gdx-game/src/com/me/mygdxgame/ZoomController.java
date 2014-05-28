@@ -104,7 +104,9 @@ public class ZoomController {
 	    shapeDebugger.circle((cursorA.x + cursorB.x) / 2, (cursorA.y + cursorB.y) / 2, 10);
 	    shapeDebugger.circle(cursorB.x, cursorB.y, 10);
 	    if (touch)
-	    	shapeDebugger.setColor(1, 1, 1, 1);
+	    	shapeDebugger.setColor(1, 1, 1, 0.5f);
+	    else
+	    	shapeDebugger.setColor(0, 1, 1, 0.5f);
 	    shapeDebugger.circle(cursor.x, cursorA.y, 30);
 	    shapeDebugger.end();
 	    myBatch.end();

@@ -21,6 +21,7 @@ public class GUI implements IGUI {
 	private boolean				_initPosition;
 
 	public GUI() {
+		StationManager.instance().endDraw = true;
 		_shapeRenderer = new ShapeRenderer();
 		_str = new String();
 		_world = World.instance();
@@ -87,6 +88,7 @@ public class GUI implements IGUI {
 	//	Log.d("gakla", "galasky SIZE RENDER LISTE STATION " + _world.stationManager.getListStation().size());
 		if (StationManager.instance().getListStation() != null && _world.listBubbleStop != null)
 		{
+			StationManager.instance().endDraw = false;
 			Date d = new Date();
 			_spriteBatch.begin();
 			Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
@@ -97,6 +99,7 @@ public class GUI implements IGUI {
 				bubbleStop = i.next();
 				_font.draw(_spriteBatch, bubbleStop.station.name, bubbleStop.position.x, bubbleStop.position.y);
 			}
+			StationManager.instance().endDraw = true;
 			//_font.draw(_spriteBatch,_str, 20, 100);
 			_spriteBatch.end();
 		}
