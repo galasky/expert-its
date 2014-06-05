@@ -1,7 +1,5 @@
 package com.me.mygdxgame;
 
-import android.util.Log;
-
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 

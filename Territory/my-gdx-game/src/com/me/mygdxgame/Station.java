@@ -1,15 +1,15 @@
 package com.me.mygdxgame;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 public class Station {
 
 	public Vector2			position;
-	public Array<Stop>		stops;
+	public ArrayList<Stop>	stops;
 	public String			name;
 	public CoordinateGPS	coord;
 	public ModelInstance	instance;
@@ -19,7 +19,7 @@ public class Station {
 	public Station() {
 	   	instance = null;
     	position = new Vector2();
-    	stops = new Array<Stop>();
+    	stops = new ArrayList<Stop>();
 	}
 	
 	public void	getListStopTimes() {
@@ -50,8 +50,8 @@ public class Station {
 			coord.latitude += stop.coord.latitude;
 			coord.longitude += stop.coord.longitude;
 		}
-		coord.latitude /= stops.size;
-		coord.longitude /= stops.size;
+		coord.latitude /= stops.size();
+		coord.longitude /= stops.size();
 		calcDistance();
 	}
 	

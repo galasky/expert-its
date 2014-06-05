@@ -2,10 +2,9 @@ package com.me.mygdxgame;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 
@@ -15,6 +14,8 @@ public class MyCamera {
 	private float				_angleFiltre;
 	public PerspectiveCamera	pCam;
 	private float				_zoom;
+	public double				width;
+	public double				height;
 	private Vector3				_look;
 	public boolean				firstPerson;
 	private ArrayList<Float>	_tab;
@@ -27,12 +28,43 @@ public class MyCamera {
 		_zoom = 10;
         _angleFiltre = 0;
         pCam = new PerspectiveCamera(70, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        pCam = new PerspectiveCamera(70, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        width = 2 * Math.tan(pCam.fieldOfView) * (pCam.viewportHeight / pCam.viewportWidth);
+        height = 2 * Math.tan(pCam.fieldOfView);
         _look = new Vector3(1, 0, 0);
         pCam.lookAt(0,0,0);
         pCam.near = 1f;
         pCam.far = 3000f;
         pCam.update();
+	}
+	
+	public Vector3	transorm(Vector2 point) {
+		Vector2 p = new Vector2(point);
+		Vector3 position = new Vector3(pCam.position);
+		Vector3 right = new Vector3(pCam.up);
+		right = right.rotate(pCam.direction, 90);
+		Vector3 up = new Vector3(pCam.up);
+		
+		p.x -= Gdx.graphics.getWidth() / 2;
+		p.y -= Gdx.graphics.getHeight() / 2;
+		
+		p.x /= 3.1;
+		p.y /= 1.5;
+		
+		p.x = (float) ((p.x / Gdx.graphics.getWidth()) * width);
+		p.y = (float) ((p.y / Gdx.graphics.getHeight()) * height);
+
+		right.x *= p.x;
+		right.y *= p.x;
+		right.z *= p.x;
+		up.x *= p.y;
+		up.y *= p.y;
+		up.z *= p.y;
+		
+		position = position.add(pCam.direction);
+		position = position.add(up);
+		position = position.add(right);
+		
+		return position;
 	}
 	
 	public static MyCamera instance() {
@@ -95,6 +127,7 @@ public class MyCamera {
 			firstPerson();
 		else
 			thirdPerson();
+		You.instance().setRotation(_angleFiltre);
 	}
 	
 	private void	thirdPerson() {

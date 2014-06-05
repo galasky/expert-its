@@ -7,12 +7,8 @@ import java.util.List;
 import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Vector3;
 
 public class StationManager {
@@ -49,7 +45,6 @@ public class StationManager {
 	public void add(List<Stop> listStop) {
 		Iterator<Stop> i = listStop.iterator();
 		listStation = new ArrayList<Station>();
-		Log.d("galasky", "galasky ADD STATION");
 		while (i.hasNext())
 		{
 			Stop stop = i.next();
@@ -85,23 +80,15 @@ public class StationManager {
 		Model model;
         ModelInstance instance;
 		
-        /*model = Game3D.instance().modelBuilder.createBox(.2f, .2f, .2f, 
-        new Material(ColorAttribute.createDiffuse(Color.RED)),
-        Usage.Position | Usage.Normal);*/
         model = Game3D.instance().assets.get("data/steve/steve.obj", Model.class);
     	decal.x = (float) Territory.distanceAB(_you.coordinate, new CoordinateGPS(station.coord.latitude, _you.coordinate.longitude)) * 10 * (station.coord.latitude > _you.coordinate.latitude ? 1 : -1);
     	decal.z = (float) Territory.distanceAB(_you.coordinate, new CoordinateGPS(_you.coordinate.latitude, station.coord.longitude)) * 10 *(station.coord.longitude > _you.coordinate.longitude ? 1 : -1);
-
         instance = new ModelInstance(model);
-         	        
-	    instance.transform.setToTranslation(decal.x, .5f, decal.z);
-	    instance.transform.scale(0.1f, 0.1f, 0.1f);
 	    station.position.x = decal.z;
 	    station.position.y = decal.x;
 	    station.instance = instance;
-	    //	Game3D.instance().instances.add(instance);
-	    //model = Game3D.instance().assets.get("data/steve/steve.obj", Model.class);
-	    //ModelInstance Steve = new ModelInstance(model);
+	    station.instance.transform.setTranslation(decal.x, 0, decal.z);
+	    station.instance.transform.scale(0.1f, 0.1f, 0.1f);
 	    Game3D.instance().instances.add(instance);
 	}
 	
@@ -123,7 +110,6 @@ public class StationManager {
 			}
 			listTmp.clear();
 		}
-			
 		else
 			listTmp.add(bubble);
 	}

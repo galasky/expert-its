@@ -1,7 +1,5 @@
 package com.me.mygdxgame;
 
-import android.util.Log;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -15,7 +13,6 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class Game3D implements ApplicationListener {
@@ -55,13 +52,17 @@ public class Game3D implements ApplicationListener {
 	
 	public void loadModel() {
 		assets.load("data/steve/steve.obj", Model.class);
+		//assets.load("data/steve/steve.obj", Model.class);
+		//assets.load("data/zombie/zombie.obj", Model.class);
 		loading = true;
 	}
 	
     private void doneLoading() {
     	
         ModelInstance Steve = new ModelInstance(assets.get("data/steve/steve.obj", Model.class));
+        //Steve.transform.setToRotation(Vector3.Z, 45);
         Steve.transform.scale(0.2f, 0.2f, 0.2f);
+        You.instance().steve = Steve;
         perso.add(Steve);
         loading = false;
     }

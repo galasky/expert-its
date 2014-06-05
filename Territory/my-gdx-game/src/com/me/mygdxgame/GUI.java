@@ -3,33 +3,44 @@ package com.me.mygdxgame;
 import java.util.Date;
 import java.util.Iterator;
 
-import android.util.Log;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector3;
 
 public class GUI implements IGUI {
 	private SpriteBatch			_spriteBatch;
-	private ShapeRenderer		_shapeRenderer;
 	private BitmapFont			_font;
 	private	World				_world;
+	private OrthographicCamera camera;
+	private SpriteBatch myBatch;
+	private Vector3 			V;
+	private double				k;
 	private String				_str;
 	private BubbleStop			_bubbleSelect;
+	private ShapeRenderer shapeDebugger;
 	private boolean				_initPosition;
 
 	public GUI() {
 		StationManager.instance().endDraw = true;
-		_shapeRenderer = new ShapeRenderer();
+		shapeDebugger = new ShapeRenderer();
 		_str = new String();
 		_world = World.instance();
+		myBatch = new SpriteBatch();
 		_spriteBatch = new SpriteBatch();
-    	_font = new BitmapFont();
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		_font = new BitmapFont();
     	_font.setColor(Color.GREEN);
         _font.setScale(3F, 3F);
         _bubbleSelect = null;
+	   
         initPosition();
 	}
 	
@@ -84,8 +95,6 @@ public class GUI implements IGUI {
 	}
 	
 	private void renderAll() {
-	//	Log.d("gakla", "galasky SIZE RENDER LISTE BUBBLE STOP " + _world.listBubbleStop.size());
-	//	Log.d("gakla", "galasky SIZE RENDER LISTE STATION " + _world.stationManager.getListStation().size());
 		if (StationManager.instance().getListStation() != null && _world.listBubbleStop != null)
 		{
 			StationManager.instance().endDraw = false;
@@ -100,27 +109,64 @@ public class GUI implements IGUI {
 				_font.draw(_spriteBatch, bubbleStop.station.name, bubbleStop.position.x, bubbleStop.position.y);
 			}
 			StationManager.instance().endDraw = true;
-			//_font.draw(_spriteBatch,_str, 20, 100);
 			_spriteBatch.end();
 		}
 	}
 	
 	private void renderSelect() {
+
+		myBatch.begin();
+		Gdx.gl20.glLineWidth(10);
+		
+		//Enable transparency
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		    
+		shapeDebugger.setProjectionMatrix(camera.combined);
+	    shapeDebugger.begin(ShapeType.Line);
+	    shapeDebugger.setColor(0f, 0f, 0f, 0.80f);
+	    shapeDebugger.end();
+	    shapeDebugger.begin(ShapeType.Filled);
+	    shapeDebugger.rect(_bubbleSelect.position.x - Gdx.graphics.getWidth() / 2 - 20, _bubbleSelect.position.y - Gdx.graphics.getHeight() / 2 + 20, 650,  -(_bubbleSelect.station.stops.size() + 1.5f)* _bubbleSelect.slide);
+	    shapeDebugger.end();
+	    myBatch.end();
+	    
+		myBatch.begin();
+		Gdx.gl20.glLineWidth(20);
+		
+		//Enable transparency
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		    
+		shapeDebugger.setProjectionMatrix(MyCamera.instance().pCam.combined);
+	    shapeDebugger.begin(ShapeType.Line);
+	    shapeDebugger.setColor(1f, 1f, 1f, 0.80f);
+	    Vector3 A = new Vector3(_bubbleSelect.station.position.y, 0.8f, _bubbleSelect.station.position.x);
+	    Vector3 B = MyCamera.instance().transorm(_bubbleSelect.position);
+	    
+	    shapeDebugger.line(A, B);
+	    shapeDebugger.end();
+	    myBatch.end();
+	    
+	    Gdx.gl.glDisable(GL20.GL_BLEND);
+	    
 		_spriteBatch.begin();
 		Date d = new Date();
 		_font.setColor(Color.WHITE);
 		_font.draw(_spriteBatch, _bubbleSelect.station.name, _bubbleSelect.position.x, _bubbleSelect.position.y);
-		
+		_font.draw(_spriteBatch, "position ->  : viewportHeight " + MyCamera.instance().pCam.viewportHeight + " viewportWdith : " + MyCamera.instance().pCam.viewportWidth, 50, 50);
 		Iterator<Stop> i = _bubbleSelect.station.stops.iterator();
 		int nb = 0;
 		while (i.hasNext())
 		{
 			Stop stop = i.next();
+			nb++;
 			if (stop.nextTime != null)
 			{
-				nb++;
 				_font.draw(_spriteBatch, (int) (_bubbleSelect.station.distanceTemps * 60) + " min marche + " + stop.nextTime.diff(new Date()) + " min " + stop.nextTime.getString(), _bubbleSelect.position.x, _bubbleSelect.position.y - nb * _bubbleSelect.slide);
 			}
+			else
+				_font.draw(_spriteBatch, "Service terminée", _bubbleSelect.position.x, _bubbleSelect.position.y - nb * _bubbleSelect.slide);
 		}
 		_spriteBatch.end();
 		

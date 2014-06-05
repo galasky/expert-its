@@ -1,13 +1,8 @@
 package com.me.mygdxgame;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import android.util.Log;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 public class BubbleStop {
@@ -59,7 +54,10 @@ public class BubbleStop {
 	}
 	
 	public boolean collision(float x, float y) {
-		return (x >= position.x && x <= position.x + 40 * station.name.length() && y >= position.y - 50 && y <= position.y + 50);
+		if (!select)
+			return (x >= position.x && x <= position.x + 40 * station.name.length() && y >= position.y - 50 && y <= position.y + 50);
+		else
+			return (x >= position.x && x <= position.x + 650 && y >= position.y - (station.stops.size() + 1.5f) * slide && y <= position.y + 50);
 	}
 	
 	public void		move(float deltaX, float deltaY)

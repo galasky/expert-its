@@ -4,9 +4,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.math.Vector2;
-
 public class Stop {
 
 	public List<StopTimes>	listStopTimes;

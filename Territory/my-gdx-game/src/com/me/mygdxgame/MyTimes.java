@@ -4,17 +4,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import android.util.Log;
-
 public class MyTimes {
 	private	String _str;
 	public int	minutes;
 	public int	hours;
 	public MyTimes(String str) {
-		_str = str;
 		String[] words = str.split(":");
 		minutes = Integer.parseInt(words[1]);
 		hours = Integer.parseInt(words[0]);
+		_str = hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
 	}
 	
 	public MyTimes(Date d) {

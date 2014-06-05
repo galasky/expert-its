@@ -1,10 +1,10 @@
 package com.me.mygdxgame;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 public class World {
-	public List<BubbleStop> 		listBubbleStop;
+	public ArrayList<BubbleStop> 	listBubbleStop;
 	public	LoadListStop			loadListStop;
 	
 	private	World() {

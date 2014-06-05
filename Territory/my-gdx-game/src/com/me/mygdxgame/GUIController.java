@@ -38,7 +38,6 @@ public class GUIController {
         _font.setScale(3F, 3F);
         _refreshGUI = new RefreshGUI(_gui);
         _refreshGUI.start();
-        
 	}
 	
 	static float random(float Min, float Max) {
@@ -116,7 +115,7 @@ public class GUIController {
 		
 		_spriteBatch.begin();
 		_font.setColor(Color.WHITE);
-		_font.draw(_spriteBatch, time.hours + ":" + (time.minutes < 10 ? "0"+time.minutes : time.minutes), 40, Gdx.graphics.getHeight() - 40);
+		_font.draw(_spriteBatch, time.hours + ":" + (time.minutes < 10 ? "0" + time.minutes : time.minutes), 40, Gdx.graphics.getHeight() - 40);
 		_spriteBatch.end();
 		_gui.render();
 		_zoomController.render();
@@ -134,43 +133,20 @@ public class GUIController {
 	public void tap(float x, float y) {
 		_gui.tap(x, y);
 	}
-	/*public void	refreshBubbleStop() {
+	public void	refreshBubbleStop() {
 		if (_world.listBubbleStop == null)
 			return ;
-		List<BubbleStop>	listTmp = new ArrayList<BubbleStop>();
-		
 		Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
 		BubbleStop bubble = null;
 		while (i.hasNext())
 		{
 			bubble = i.next();
-			bubble.refreshNextTime();
-			if (listTmp.size() == 0)
+			Iterator<Stop> u = bubble.station.stops.iterator();
+			while (u.hasNext())
 			{
-				//Log.d("ok", "galasky add " + 0);
-				listTmp.add(bubble);
-				
+				Stop stop = u.next();
+				stop.refreshNextTime();
 			}
-			else
-    		{
-        		BubbleStop tmp;
-        		boolean find = false;
-        		
-        		for (int u = 0; find == false && u < listTmp.size(); u++)
-        		{
-        			tmp = listTmp.get(u);
-        			if (bubble.isFasterTo(tmp))
-        			{
-        				listTmp.add(u, bubble);
-        				find = true;
-        			}
-        		}
-        		if (find == false)
-    			{
-    				listTmp.add(bubble);
-    			}
-    		}
 		}
-		_world.listBubbleStop = listTmp;
-	}*/
+	}
 }

@@ -1,12 +1,10 @@
 package com.me.mygdxgame;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.util.Log;
 
-import com.badlogic.gdx.Gdx;
 
 public class RefreshGUI extends Thread {
 	private IGUI	_gui;
@@ -20,25 +18,42 @@ public class RefreshGUI extends Thread {
 		_world = World.instance();
 	}
 	
+	TimerTask task = new TimerTask()
+	{
+		@Override
+		public void run() 
+		{
+			Log.d("ok", "galasky REFRESH");
+			refreshBubbleStop();
+			//_gui.refresh();
+		}	
+	};
+	
 	public void run() {
 		_time = 0;
-Log.d("ok", "galasky RUUUUUN");
-	    while (_life)
-	    {
-	    	_time += Gdx.graphics.getDeltaTime();
-	    	if (_time > 1 && StationManager.instance().loadFinish())
-	    	{
-	    		_time = 0;
-				//refreshBubbleStop();
-				//_gui.refresh();
-	    	}
-	    }
+		Log.d("ok", "galasky RUUUUUN");
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(task, 0, 1000);
 	  }
+	
+	
 	
 	public void	refreshBubbleStop() {
 		if (_world.listBubbleStop == null)
 			return ;
-		Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
+		
+		for (int i = 0; i < _world.listBubbleStop.size(); i++)
+		{
+			BubbleStop bubble = _world.listBubbleStop.get(i);
+			for (int u = 0; u < bubble.station.stops.size(); u++)
+			{
+				Stop stop = bubble.station.stops.get(u);
+				stop.refreshNextTime();
+			}
+		}
+		
+		
+		/*Iterator<BubbleStop> i = _world.listBubbleStop.iterator();
 		BubbleStop bubble = null;
 		while (i.hasNext())
 		{
@@ -49,6 +64,6 @@ Log.d("ok", "galasky RUUUUUN");
 				Stop stop = u.next();
 				stop.refreshNextTime();
 			}
-		}
+		}*/
 	}
 }

@@ -6,6 +6,8 @@
 	<classpathentry kind="lib" path="libs/gdx-backend-jglfw.jar"/>
 	<classpathentry kind="lib" path="libs/gdx-backend-lwjgl.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/joda-time-2.3.jar"/>
-	<classpathentry kind="lib" path="/my-gdx-game-android/libs/android.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Administrateur/workspace/Territory/my-gdx-game/libs/android.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-stb-truetype.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-freetype.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

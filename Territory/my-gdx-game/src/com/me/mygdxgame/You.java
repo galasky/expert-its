@@ -1,17 +1,13 @@
 package com.me.mygdxgame;
 
 import android.location.Location;
-import android.util.Log;
 
-import com.badlogic.gdx.Files.FileType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 
@@ -24,19 +20,26 @@ public class You {
 	private float			_angle;
 	private ModelBuilder 	modelBuilder;
 	public CoordinateGPS	start;
-	
+	public ModelInstance	steve;
+	private Vector3			_goTo;
 	private	You() {
 		modelBuilder = new ModelBuilder();
 		position = new Vector3(0, 0, 0);
+		_goTo = null;
 		_loaded = true;
+		steve = null;
 		coordinate = null;
 		start = null;
 		_angle = 0f;
 	}
 	
 	public void setRotation(float angle) {
-		modelInstance.transform.setToRotation(new Vector3(0, 1, 0), (float) (-180 * angle / Math.PI));
-		_angle = angle;
+		if (steve != null)
+		{
+			steve.transform.setToRotation(new Vector3(0, 1, 0), (float) (-180 * angle / Math.PI));
+			steve.transform.scale(0.2f, 0.2f, 0.2f);
+			_angle = angle;
+		}
 	}
 	
 	public void load() {
@@ -53,6 +56,15 @@ public class You {
 	
 	public boolean isLoaded() {
 		return _loaded;
+	}
+	
+/*	public void goTo(Vector3 goTo)
+	{
+		_goTo = goTo;
+	}*/
+	
+	public void update() {
+		//modelInstance.transform.setTranslation(_goTo);
 	}
 	
 	public void setPosition(Location location) {
@@ -74,7 +86,9 @@ public class You {
 			/*Log.d("galasky", "galasky Px " + p.x);
 			Log.d("galasky", "galasky Pz " + p.z);
 			Log.d("galasky", "galasky ");*/
+			//goTo(p);
 			modelInstance.transform.setTranslation(p);
+			
 			position.x = p.x;
 			position.y = p.y;
 			position.z = p.z;
@@ -93,7 +107,12 @@ public class You {
 			/*Log.d("galasky", "galasky Px " + p.x);
 			Log.d("galasky", "galasky Pz " + p.z);
 			Log.d("galasky", "galasky ");*/
-			modelInstance.transform.setTranslation(p);
+			//modelInstance.transform.setTranslation(p);
+			if (steve != null)
+			{
+				steve.transform.setTranslation(p);
+			}
+			
 			position.x = p.x;
 			position.y = p.y;
 			position.z = p.z;
